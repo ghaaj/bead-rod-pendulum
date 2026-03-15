@@ -158,11 +158,11 @@ class ProjectileEngine extends BaseEngine<ProjectileVar>
   importSimulatorState(state: SimulatorStateExceptFor<SimulatorMode.Free>): void {
     const { x: [, x], θ: [, θ] } = state.state;
     const { x: v, θ: ω } = state.calcQDots();
-    const { rodI } = state.params;
+    const { m, rodI } = state.params;
     const [cos, sin] = [Math.cos(θ), Math.sin(θ)];
     this.refreshState({
-      X: [v * cos - x * ω * sin, x * cos],
-      Y: [v * sin + x * ω * cos, x * sin],
+      X: [m * (v * cos - x * ω * sin), x * cos],
+      Y: [m * (v * sin + x * ω * cos), x * sin],
       θ: [rodI * ω, θ],
     });
   }
