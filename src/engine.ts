@@ -187,11 +187,15 @@ export class Simulator {
   }
 
   handleReset() {
-    this.refreshParams();
     this.switchEngine(SimulatorMode.Constrained).refreshState(this.blueprint.init);
   }
 
   private switchEngine<M extends SimulatorMode>(mode: M): Engine<M> {
+    const newEngine = this._switchEngine(mode);
+    return this.refreshParams(), newEngine;
+  }
+
+  private _switchEngine<M extends SimulatorMode>(mode: M): Engine<M> {
     if (isMode(this.engine, mode)) return this.engine;
     const newEngine = this.engineMap[mode];
     switch (true) {
