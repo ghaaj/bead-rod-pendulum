@@ -5,18 +5,27 @@ import { unsafeGetBinding } from "./tweakpane-utils.ts";
 import { type Blueprint, type PendulumState, type Point2D, Simulator } from "./engine.ts";
 import type { GraphLogMonitorBindingApi } from "@tweakpane/core";
 
+const rad = (deg: number) => deg * Math.PI / 180;
+
 const baseParams: Blueprint = {
-  g: 9.81,
   dt: 0.075,
   l: 200,
   m: 1,
   M: 2,
   showLocus: true,
+  $gravity: true,
   $theta0: 50,
+  $omega0: 0,
+  $x0perl: 1,
+  $v0: 0,
+  get g() {
+    return this.$gravity ? 9.81 : 0;
+  },
   get init(): PendulumState {
+    const x0 = this.l * this.$x0perl;
     return {
-      x: [0, this.l],
-      θ: [0, this.$theta0 * Math.PI / 180],
+      x: [this.m * this.$v0, x0],
+      θ: [rad(this.$omega0) * (this.rodI + this.m * x0 ** 2), rad(this.$theta0)],
     };
   },
   get rodI() {
@@ -27,7 +36,17 @@ const baseParams: Blueprint = {
 const simulator = new Simulator(baseParams);
 
 type Binding<
-  K extends keyof Blueprint = "l" | "m" | "M" | "dt" | "showLocus" | "$theta0",
+  K extends keyof Blueprint =
+    | "l"
+    | "m"
+    | "M"
+    | "dt"
+    | "showLocus"
+    | "$gravity"
+    | "$theta0"
+    | "$omega0"
+    | "$x0perl"
+    | "$v0",
 > = K extends K ? {
     key: K;
     value: Blueprint[K];
@@ -47,7 +66,7 @@ new p5((p: p5) => {
   p.setup = () => {
     function setIsReset(value: boolean) {
       isReset = value;
-      theta0BindingApi.disabled = !value || isPlaying;
+      bcFolder.disabled = !value || isPlaying;
       if (isReset) locus.length = 0;
     }
     p.createCanvas(p.windowWidth, p.windowHeight, p5.P2D);
@@ -62,6 +81,7 @@ new p5((p: p5) => {
 
     const simFolder = pane.addFolder({ title: "Simulation", expanded: false });
     simFolder.addBinding(baseParams, "dt", { min: 0, max: 1 });
+    simFolder.addBinding(baseParams, "$gravity", { label: "Gravity" });
     simFolder.addBinding(baseParams, "showLocus", { label: "Show Locus" });
 
     function initializeHamiltonianMonitor() {
@@ -91,11 +111,25 @@ new p5((p: p5) => {
     initializeHamiltonianMonitor();
 
     const bcFolder = pane.addFolder({ title: "Boundary Conditions", expanded: true });
-    const theta0BindingApi = bcFolder.addBinding(baseParams, "$theta0", {
-      min: 0,
+    bcFolder.addBinding(baseParams, "$theta0", {
+      min: -90,
       max: 90,
       label: "θ₀",
       step: 0.0001,
+    });
+    bcFolder.addBinding(baseParams, "$omega0", {
+      label: "ω₀",
+      step: 0.01,
+    });
+    bcFolder.addBinding(baseParams, "$x0perl", {
+      label: "x₀ / l",
+      min: -1,
+      max: 1,
+      step: 0.01,
+    });
+    bcFolder.addBinding(baseParams, "$v0", {
+      label: "v₀",
+      step: 0.01,
     });
 
     pane.addButton({

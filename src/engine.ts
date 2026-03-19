@@ -53,7 +53,11 @@ export interface Params {
 }
 
 export interface Blueprint extends Params {
+  $gravity: boolean;
   $theta0: number;
+  $omega0: number;
+  $x0perl: number;
+  $v0: number;
 }
 
 abstract class BaseEngine<TVar extends string> extends Yoshida4<TVar> {
