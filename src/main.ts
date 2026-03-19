@@ -156,9 +156,12 @@ new p5((p: p5) => {
           simulator.refreshParams();
           break;
         default:
+          if (isReset) {
+            simulator.handleReset();
+          } else {
+            simulator.refreshParams();
+          }
           initializeHamiltonianMonitor();
-          if (isReset) simulator.handleReset();
-          else simulator.refreshParams();
       }
     });
   };
