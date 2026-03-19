@@ -65,9 +65,9 @@ new p5((p: p5) => {
 
   p.setup = () => {
     function setIsReset(value: boolean) {
-      isReset = value;
-      bcFolder.disabled = !value || isPlaying;
-      if (isReset) locus.length = 0;
+      isReset = value && !isPlaying;
+      bcFolder.disabled = !isReset;
+      if (value) locus.length = 0;
     }
     p.createCanvas(p.windowWidth, p.windowHeight, p5.P2D);
     diagonalLength = Math.hypot(p.width, p.height);
