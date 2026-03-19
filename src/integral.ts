@@ -30,9 +30,9 @@ export abstract class Yoshida4<TVar extends string> extends Leapfrog<TVar> {
   private static readonly W1 = 1 / (2 - Math.cbrt(2));
   private static readonly W0 = 1 - 2 * this.W1;
 
-  override step(state: State<TVar> = this.state): void {
-    super.step(state, this.dt * Yoshida4.W1);
-    super.step(state, this.dt * Yoshida4.W0);
-    super.step(state, this.dt * Yoshida4.W1);
+  override step(state: State<TVar> = this.state, dt: number = this.dt): void {
+    super.step(state, dt * Yoshida4.W1);
+    super.step(state, dt * Yoshida4.W0);
+    super.step(state, dt * Yoshida4.W1);
   }
 }
