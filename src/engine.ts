@@ -110,7 +110,7 @@ class PendulumEngine extends BaseEngine<PendulumVar>
       rodEnd: [l * cos, l * sin],
       bead: [x * cos, x * sin],
       get hamiltonian() {
-        return (px ** 2) / (2 * m) + pθ ** 2 / (2 * (rodI + m * x ** 2)) + m * g * x * sin;
+        return px ** 2 / (2 * m) + pθ ** 2 / (2 * (rodI + m * x ** 2)) + m * g * x * sin;
       },
     };
   }
