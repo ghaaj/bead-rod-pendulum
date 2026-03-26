@@ -66,7 +66,6 @@ abstract class BaseEngine<TVar extends string> extends Yoshida4<TVar> {
 
   refreshParams(params: Params) {
     this.params = params;
-    requestAnimationFrame(() => this.dt = this.params.dt);
   }
 
   refreshState(init: State<TVar>) {
@@ -75,7 +74,6 @@ abstract class BaseEngine<TVar extends string> extends Yoshida4<TVar> {
 
   constructor(public params: Params) {
     super({ dt: params.dt });
-    this.refreshParams(params);
   }
 }
 

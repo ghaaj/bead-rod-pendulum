@@ -8,7 +8,7 @@ import type { GraphLogMonitorBindingApi } from "@tweakpane/core";
 const rad = (deg: number) => deg * Math.PI / 180;
 
 const baseParams: Blueprint = {
-  dt: 0.075,
+  dt: 0.005,
   l: 200,
   m: 1,
   M: 2,
@@ -40,7 +40,6 @@ type Binding<
     | "l"
     | "m"
     | "M"
-    | "dt"
     | "showLocus"
     | "$gravity"
     | "$theta0"
@@ -73,15 +72,14 @@ new p5((p: p5) => {
   materialFolder.addBinding(baseParams, "M", { min: 0 });
 
   const simFolder = pane.addFolder({ title: "Simulation", expanded: false });
-  simFolder.addBinding(baseParams, "dt", { min: 0, max: 1 });
   simFolder.addBinding(baseParams, "$gravity", { label: "Gravity" });
   simFolder.addBinding(baseParams, "showLocus", { label: "Show Locus" });
 
   function initializeHamiltonianMonitor() {
     const hamiltonianInit = simulator.renderableState.hamiltonian;
     const { valueController: { props }, value: { rawValue } } = hamiltonianMonitor.controller;
-    props.set("min", hamiltonianInit * 0.9);
-    props.set("max", hamiltonianInit * 1.1);
+    props.set("min", hamiltonianInit * 0.95);
+    props.set("max", hamiltonianInit * 1.05);
     rawValue.fill(undefined);
   }
   const hamiltonianOpts = {
@@ -208,7 +206,7 @@ new p5((p: p5) => {
 
     if (isPlaying) {
       locus.push([beadX, beadY]);
-      simulator.step();
+      for (let i = 20; i--;) simulator.step();
     }
   };
 });
