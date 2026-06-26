@@ -265,10 +265,10 @@ export const createBlueprint = (
   substeps: 20,
   showLocus: true,
   $gravity: true,
-  $theta0: 50,
-  $omega0: 0,
-  $x0perl: 1,
-  $v0: 0,
+  $theta0: 0,
+  $omega0: 10,
+  $x0perl: 0,
+  $v0: 26.3822,
   ...blueprint,
   get g() {
     return this.$gravity ? 9.81 : 0;

@@ -83,7 +83,7 @@ new p5((p: p5) => {
   });
   bcFolder.addBinding(blueprint, "$omega0", {
     label: "ω₀",
-    step: 0.01,
+    step: 0.0001,
   });
   bcFolder.addBinding(blueprint, "$x0perl", {
     label: "x₀ / l",
@@ -93,7 +93,7 @@ new p5((p: p5) => {
   });
   bcFolder.addBinding(blueprint, "$v0", {
     label: "v₀",
-    step: 0.01,
+    step: 0.0001,
   });
 
   pane.addButton({
