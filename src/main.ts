@@ -2,38 +2,11 @@ import "./style.css";
 import p5 from "p5";
 import { Pane } from "tweakpane";
 import { unsafeGetBinding } from "./tweakpane-utils.ts";
-import { type Blueprint, type PendulumState, type Point2D, Simulator } from "./engine.ts";
+import { type Blueprint, createBlueprint, type Point2D, Simulator } from "./engine.ts";
 import type { GraphLogMonitorBindingApi } from "@tweakpane/core";
 
-const rad = (deg: number) => deg * Math.PI / 180;
-
-const baseParams: Blueprint = {
-  dt: 0.005,
-  l: 200,
-  m: 1,
-  M: 2,
-  showLocus: true,
-  $gravity: true,
-  $theta0: 50,
-  $omega0: 0,
-  $x0perl: 1,
-  $v0: 0,
-  get g() {
-    return this.$gravity ? 9.81 : 0;
-  },
-  get init(): PendulumState {
-    const x0 = this.l * this.$x0perl;
-    return {
-      x: [this.m * this.$v0, x0],
-      θ: [rad(this.$omega0) * (this.rodI + this.m * x0 ** 2), rad(this.$theta0)],
-    };
-  },
-  get rodI() {
-    return 1 / 3 * this.M * this.l ** 2;
-  },
-};
-
-const simulator = new Simulator(baseParams);
+const blueprint = createBlueprint();
+const simulator = new Simulator(blueprint);
 
 type Binding<
   K extends keyof Blueprint =
@@ -67,13 +40,13 @@ new p5((p: p5) => {
 
   const pane = new Pane();
   const materialFolder = pane.addFolder({ title: "Material", expanded: false });
-  materialFolder.addBinding(baseParams, "l", { min: 0 });
-  materialFolder.addBinding(baseParams, "m", { min: 0 });
-  materialFolder.addBinding(baseParams, "M", { min: 0 });
+  materialFolder.addBinding(blueprint, "l", { min: 0 });
+  materialFolder.addBinding(blueprint, "m", { min: 0 });
+  materialFolder.addBinding(blueprint, "M", { min: 0 });
 
   const simFolder = pane.addFolder({ title: "Simulation", expanded: false });
-  simFolder.addBinding(baseParams, "$gravity", { label: "Gravity" });
-  simFolder.addBinding(baseParams, "showLocus", { label: "Show Locus" });
+  simFolder.addBinding(blueprint, "$gravity", { label: "Gravity" });
+  simFolder.addBinding(blueprint, "showLocus", { label: "Show Locus" });
 
   function initializeHamiltonianMonitor() {
     const hamiltonianInit = simulator.renderableState.hamiltonian;
@@ -102,23 +75,23 @@ new p5((p: p5) => {
   initializeHamiltonianMonitor();
 
   const bcFolder = pane.addFolder({ title: "Boundary Conditions", expanded: true });
-  bcFolder.addBinding(baseParams, "$theta0", {
+  bcFolder.addBinding(blueprint, "$theta0", {
     min: -90,
     max: 90,
     label: "θ₀",
     step: 0.0001,
   });
-  bcFolder.addBinding(baseParams, "$omega0", {
+  bcFolder.addBinding(blueprint, "$omega0", {
     label: "ω₀",
     step: 0.01,
   });
-  bcFolder.addBinding(baseParams, "$x0perl", {
+  bcFolder.addBinding(blueprint, "$x0perl", {
     label: "x₀ / l",
     min: -1,
     max: 1,
     step: 0.01,
   });
-  bcFolder.addBinding(baseParams, "$v0", {
+  bcFolder.addBinding(blueprint, "$v0", {
     label: "v₀",
     step: 0.01,
   });

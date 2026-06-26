@@ -247,3 +247,34 @@ export class Simulator {
     return this.engine.calcRenderableState();
   }
 }
+
+export const rad = (deg: number) => deg * Math.PI / 180;
+
+export const createBlueprint = (
+  blueprint?: Omit<Partial<Blueprint>, "g" | "init" | "rodI">,
+): Blueprint => ({
+  dt: 0.005,
+  l: 200,
+  m: 1,
+  M: 2,
+  showLocus: true,
+  $gravity: true,
+  $theta0: 50,
+  $omega0: 0,
+  $x0perl: 1,
+  $v0: 0,
+  ...blueprint,
+  get g() {
+    return this.$gravity ? 9.81 : 0;
+  },
+  get init(): PendulumState {
+    const x0 = this.l * this.$x0perl;
+    return {
+      x: [this.m * this.$v0, x0],
+      θ: [rad(this.$omega0) * (this.rodI + this.m * x0 ** 2), rad(this.$theta0)],
+    };
+  },
+  get rodI() {
+    return 1 / 3 * this.M * this.l ** 2;
+  },
+});
