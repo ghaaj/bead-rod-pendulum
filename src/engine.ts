@@ -47,6 +47,7 @@ export interface Params {
   l: number;
   m: number;
   M: number;
+  substeps: number;
   showLocus: boolean;
   init: PendulumState;
   rodI: number;
@@ -234,13 +235,17 @@ export class Simulator {
     this.refreshParams();
   }
 
-  step() {
+  stepOnce() {
     this.engine.step();
     if (isMode(this.engine, SimulatorMode.Constrained)) {
       const { x: [, x] } = this.engine.state;
       const { l } = this.engine.params;
       if (Math.abs(x) > l) this.switchEngine(SimulatorMode.Free);
     }
+  }
+
+  step() {
+    for (let i = this.params.substeps; i--;) this.stepOnce();
   }
 
   get renderableState() {
@@ -257,6 +262,7 @@ export const createBlueprint = (
   l: 200,
   m: 1,
   M: 2,
+  substeps: 20,
   showLocus: true,
   $gravity: true,
   $theta0: 50,

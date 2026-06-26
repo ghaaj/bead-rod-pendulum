@@ -179,7 +179,7 @@ new p5((p: p5) => {
 
     if (isPlaying) {
       locus.push([beadX, beadY]);
-      for (let i = 20; i--;) simulator.step();
+      simulator.step();
     }
   };
 });
